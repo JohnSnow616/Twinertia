@@ -7,7 +7,7 @@
   "homepage": "https://JohnSnow616.github.io/Twinertia/",
   "scripts": {
     "postinstall": "npm run build:client && npm run build:server",
-    "build:client": "cd src/client && vite build",
+    "build:client": "cd src/client && npx vite build",
     "build:server": "cd src/server && vite build",
     "build": "npm run build:client && npm run build:server",
     "check": "npm run type-check && npm run lint:fix && npm run prettier",
