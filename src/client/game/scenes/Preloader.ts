@@ -20,12 +20,8 @@ export class Preloader extends Scene {
   }
 
   preload() {
-    this.load.setPath("assets");
-this.load.image("light_orb", "light_orb.png");   // put a small 16x16 yellow orb in assets/
-this.load.image("shadow_orb", "shadow_orb.png"); // optional if you want separate visuals
-this.load.audio("collect", "collect.wav");   
-    // ✅ Load your logo (already present)
-    this.load.image("logo", "logo.png");
+    this.load.setPath("assets");  
+    this.load.image("background", "assets/bg.png");
 
     // ✅ Correct path and frame sizes
     this.load.spritesheet("boy", "boy_character.png", {

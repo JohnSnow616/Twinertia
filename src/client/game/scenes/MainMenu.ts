@@ -1,75 +1,115 @@
-import { Scene, GameObjects } from 'phaser';
+// twinertia/src/client/game/scenes/MainMenu.ts
+import { Scene, GameObjects } from "phaser";
 
 export class MainMenu extends Scene {
   background: GameObjects.Image | null = null;
-  logo: GameObjects.Image | null = null;
   title: GameObjects.Text | null = null;
+  playButton!: GameObjects.Text;
+  settingsButton!: GameObjects.Text;
+  quitButton!: GameObjects.Text;
 
   constructor() {
-    super('MainMenu');
+    super("MainMenu");
   }
 
-  /**
-   * Reset cached GameObject references every time the scene starts.
-   * The same Scene instance is reused by Phaser, so we must ensure
-   * stale (destroyed) objects are cleared out when the scene restarts.
-   */
   init(): void {
     this.background = null;
-    this.logo = null;
     this.title = null;
   }
 
   create() {
     this.refreshLayout();
 
-    // Re-calculate positions whenever the game canvas is resized (e.g. orientation change).
-    this.scale.on('resize', () => this.refreshLayout());
+    // --- Fade in on scene start ---
+    this.cameras.main.fadeIn(800, 0, 0, 0);
 
-    this.input.once('pointerdown', () => {
-      this.scene.start('Game');
+    // --- Buttons below the title ---
+    this.playButton = this.createButton(this.scale.height * 0.68, "▶ PLAY");
+    this.settingsButton = this.createButton(this.scale.height * 0.78, "⚙ SETTINGS");
+    this.quitButton = this.createButton(this.scale.height * 0.88, "✖ QUIT");
+
+    // --- Button functionality ---
+    this.playButton.on("pointerup", () => {
+      this.cameras.main.fadeOut(500, 0, 0, 0);
+      this.time.delayedCall(500, () => this.scene.start("Instructions"));
     });
+
+    this.settingsButton.on("pointerup", () => {
+      this.settingsButton.setText("⚙ Coming Soon!");
+      this.tweens.add({
+        targets: this.settingsButton,
+        alpha: 0.5,
+        yoyo: true,
+        duration: 200,
+      });
+    });
+
+    this.quitButton.on("pointerup", () => {
+      this.quitButton.setText("✖ Not available in browser");
+      this.tweens.add({
+        targets: this.quitButton,
+        alpha: 0.5,
+        yoyo: true,
+        duration: 300,
+      });
+    });
+
+    // --- Handle resize events dynamically ---
+    this.scale.on("resize", () => this.refreshLayout());
   }
 
-  /**
-   * Positions and (lightly) scales all UI elements based on the current game size.
-   * Call this from create() and from any resize events.
-   */
   private refreshLayout(): void {
     const { width, height } = this.scale;
-
-    // Resize camera to new viewport to prevent black bars
     this.cameras.resize(width, height);
 
-    // Background – stretch to fill the whole canvas
+    // --- Background ---
     if (!this.background) {
-      this.background = this.add.image(0, 0, 'background').setOrigin(0);
+      this.background = this.add.image(0, 0, "background").setOrigin(0);
     }
-    this.background!.setDisplaySize(width, height);
+    this.background.setDisplaySize(width, height);
 
-    // Logo – keep aspect but scale down for very small screens
-    const scaleFactor = Math.min(width / 1024, height / 768);
-
-    if (!this.logo) {
-      this.logo = this.add.image(0, 0, 'logo');
-    }
-    this.logo!.setPosition(width / 2, height * 0.38).setScale(scaleFactor);
-
-    // Title text – create once, then scale on resize
-    const baseFontSize = 38;
+    // --- Title ---
+    const baseFontSize = 72;
     if (!this.title) {
       this.title = this.add
-        .text(0, 0, 'Main Menu', {
-          fontFamily: 'Arial Black',
+        .text(width / 2, height * 0.45, "T  W  I  N  E  R  T  I  A", {
+          fontFamily: "Arial Black",
           fontSize: `${baseFontSize}px`,
-          color: '#ffffff',
-          stroke: '#000000',
+          color: "#00ffff",
+          stroke: "#000000",
           strokeThickness: 8,
-          align: 'center',
+          shadow: { offsetX: 0, offsetY: 0, color: "#00ffff", blur: 20, fill: true },
         })
         .setOrigin(0.5);
     }
-    this.title!.setPosition(width / 2, height * 0.6);
-    this.title!.setScale(scaleFactor);
+
+    // Animate the title for a fun pulse effect
+    this.tweens.add({
+      targets: this.title,
+      scale: { from: 1, to: 1.05 },
+      duration: 1000,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
+  }
+
+  private createButton(y: number, label: string): GameObjects.Text {
+    const btn = this.add
+      .text(this.scale.width / 2, y, label, {
+        fontFamily: "Arial Black",
+        fontSize: "36px",
+        color: "#ffffff",
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+      .on("pointerover", () =>
+        btn.setStyle({ color: "#00e5ff", stroke: "#00ffff", strokeThickness: 3 })
+      )
+      .on("pointerout", () =>
+        btn.setStyle({ color: "#ffffff", stroke: "#000000", strokeThickness: 0 })
+      );
+
+    return btn;
   }
 }

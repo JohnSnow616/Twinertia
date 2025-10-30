@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import { Boot } from '../game/scenes/Boot';
 import { Preloader } from '../game/scenes/Preloader';
 import { MainMenu } from '../game/scenes/MainMenu';
+import { Instructions } from '../game/scenes/instructions';
 import { Game as MainGame } from '../game/scenes/Game';
 import { GameOver } from '../game/scenes/GameOver';
 
@@ -28,7 +29,7 @@ const config: Phaser.Types.Core.GameConfig = {
     },
   },
 
-  scene: [Boot, Preloader, MainMenu, MainGame, GameOver],
+  scene: [Boot, Preloader, MainMenu, Instructions, MainGame, GameOver],
 };
 
 // ---------------------------------------------
