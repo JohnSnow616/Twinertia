@@ -1,8 +1,7 @@
 import { defineConfig } from 'vite';
 
-export default defineConfig({
-  base: "/Twinertia/",L
-}); => {
+// https://vitejs.dev/config/
+export default defineConfig(({ mode }) => {
   return {
     build: {
       outDir: '../../dist/client',
@@ -15,7 +14,7 @@ export default defineConfig({
           },
         },
       },
-      ...(mode === 'production' && {
+      ...(mode === 'Twinertia' && {
         minify: 'terser',
         terserOptions: {
           compress: {
